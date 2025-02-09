@@ -1,0 +1,162 @@
+#Model Deksripsi
+Model prediksi emisi karbon dengan total input 19 bertipe data integer (int64) dan ouput berupa emisi karbon(float yang sudah dibulatkan)
+
+#input
+input_data (list): Data input berupa list angka berjumlah 19 dan berurutan sesuai kolom (body type - cooking_with).
+
+#kolom input (total 19 berurutan)
+'Body Type', 'Sex', 'Diet', 'How Often Shower', 'Heating Energy Source', 'Transport', 'Vehicle Type', 'Social Activity', 'Monthly Grocery Bill', 'Frequency of Traveling by Air', 'Vehicle Monthly Distance Km', 'Waste Bag Size', 'Waste Bag Weekly Count', 'How Long TV PC Daily Hour', 'How Many New Clothes Monthly', 'How Long Internet Daily Hour', 'Energy efficiency', 'Recycling', 'Cooking_With'
+
+#Mapping representasi untuk kolom kategorik (selain kolom ini dapat langsung diisi oleh angka)
+Mapping untuk kolom 'Body Type':
+  normal: 0
+  obese: 1
+  overweight: 2
+  underweight: 3
+
+Mapping untuk kolom 'Sex':
+  female: 0
+  male: 1
+
+Mapping untuk kolom 'Diet':
+  omnivore: 0
+  pescatarian: 1
+  vegan: 2
+  vegetarian: 3
+
+Mapping untuk kolom 'How Often Shower':
+  daily: 0
+  less frequently: 1
+  more frequently: 2
+  twice a day: 3
+
+Mapping untuk kolom 'Heating Energy Source':
+  coal: 0
+  electricity: 1
+  natural gas: 2
+  wood: 3
+
+Mapping untuk kolom 'Transport':
+  private: 0
+  public: 1
+  walk/bicycle: 2
+
+Mapping untuk kolom 'Vehicle Type':
+  None: 0
+  diesel: 1
+  electric: 2
+  hybrid: 3
+  lpg: 4
+  petrol: 5
+
+Mapping untuk kolom 'Social Activity':
+  never: 0
+  often: 1
+  sometimes: 2
+
+Mapping untuk kolom 'Frequency of Traveling by Air':
+  frequently: 0
+  never: 1
+  rarely: 2
+  very frequently: 3
+
+Mapping untuk kolom 'Waste Bag Size':
+  extra large: 0
+  large: 1
+  medium: 2
+  small: 3
+
+Mapping untuk kolom 'Energy efficiency':
+  No: 0
+  Sometimes: 1
+  Yes: 2
+
+Mapping untuk kolom 'Recycling':
+  ['Glass', 'Metal']: 0
+  ['Glass']: 1
+  ['Metal']: 2
+  ['Paper', 'Glass', 'Metal']: 3
+  ['Paper', 'Glass']: 4
+  ['Paper', 'Metal']: 5
+  ['Paper', 'Plastic', 'Glass', 'Metal']: 6
+  ['Paper', 'Plastic', 'Glass']: 7
+  ['Paper', 'Plastic', 'Metal']: 8
+  ['Paper', 'Plastic']: 9
+  ['Paper']: 10
+  ['Plastic', 'Glass', 'Metal']: 11
+  ['Plastic', 'Glass']: 12
+  ['Plastic', 'Metal']: 13
+  ['Plastic']: 14
+  []: 15
+
+Mapping untuk kolom 'Cooking_With':
+  ['Grill', 'Airfryer']: 0
+  ['Microwave', 'Grill', 'Airfryer']: 1
+  ['Microwave']: 2
+  ['Oven', 'Grill', 'Airfryer']: 3
+  ['Oven', 'Microwave', 'Grill', 'Airfryer']: 4
+  ['Oven', 'Microwave']: 5
+  ['Oven']: 6
+  ['Stove', 'Grill', 'Airfryer']: 7
+  ['Stove', 'Microwave', 'Grill', 'Airfryer']: 8
+  ['Stove', 'Microwave']: 9
+  ['Stove', 'Oven', 'Grill', 'Airfryer']: 10
+  ['Stove', 'Oven', 'Microwave', 'Grill', 'Airfryer']: 11
+  ['Stove', 'Oven', 'Microwave']: 12
+  ['Stove', 'Oven']: 13
+  ['Stove']: 14
+  []: 15
+
+
+
+#File include
+1. model.h5
+2. scaler.pkl
+3. requirements.txt
+
+
+#Memuat model
+import joblib
+from tensorflow.keras.models import load_model
+
+model = load_model('model.h5')
+
+scaler = joblib.load('scaler.pkl')
+
+
+def predict_emission(input_data):
+    input_data = np.array(input_data).reshape(1, -1)
+    input_data_scaled = scaler.transform(input_data)
+
+    prediction = model.predict(input_data_scaled)
+    
+    return float(prediction[0])
+# Fungsi rekomendasi
+def recommend_action(carbon_emission, threshold=4000):
+
+    if carbon_emission > threshold:
+        return (
+            "Emisi karbon Anda terlalu tinggi, Harap pertimbangkan untuk:\n"
+            "- Menggunakan transportasi umum atau kendaraan listrik.\n"
+            "- Mengurangi jarak tempuh kendaraan Anda.\n"
+            "- Memperbaiki efisiensi energi di rumah atau kantor Anda."
+        )
+    else:
+        return "Emisi karbon Anda berada dalam batas normal. Pertahankan kebiasaan baik Anda!"
+
+# Contoh data input
+input_data_user = [2, 0, 1, 0, 0, 1, 0, 1, 230, 0, 210, 1, 4, 7, 26, 1, 0, 2, 13]
+
+# Prediksi emisi karbon
+predicted_emission = predict_emission(input_data_user)
+
+print(f"Prediksi Emisi Karbon: {int(round(predicted_emission))} kgCO₂e. \n")
+print("Rekomendasi:")
+print(recommendation)
+
+
+
+
+
+
+
